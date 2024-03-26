@@ -1,7 +1,9 @@
 
- 
+
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace TestOpenIdConnect
 {
@@ -29,10 +31,16 @@ namespace TestOpenIdConnect
                 options.Authority = builder.Configuration["Authority"];
                 options.ClientId = builder.Configuration["ClientId"];
                 options.ClientSecret = builder.Configuration["ClientSecret"];
+            //    options.StateDataFormat = new PropertiesDataFormat(new MyDataProtector());
                 options.ResponseType = "code";
                 options.SaveTokens = true;
                 options.GetClaimsFromUserInfoEndpoint = true;
                 options.Scope.Add(".default");
+
+                 
+                //    options.CallbackPath = PathString.FromUriComponent(new Uri("https://localhost:44333/signin-oidc"));
+                // /
+              //  options.CallbackPath = PathString.FromUriComponent(new Uri("https://logingovdev.azurewebsites.net"));
             });
 
             var app = builder.Build();
@@ -57,4 +65,23 @@ namespace TestOpenIdConnect
             app.Run();
         }
     }
+
+    public class MyDataProtector : IDataProtector
+    {
+        public IDataProtector CreateProtector(string purpose)
+        {
+            return new MyDataProtector();
+        }
+
+        public byte[] Protect(byte[] plaintext)
+        {
+            return plaintext;
+        }
+
+        public byte[] Unprotect(byte[] protectedData)
+        {
+            return protectedData;
+        }
+    }
+
 }
