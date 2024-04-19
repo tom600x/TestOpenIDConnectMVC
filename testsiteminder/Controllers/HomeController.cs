@@ -10,6 +10,18 @@ namespace TestOpenIdConnect.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+
+    
+    private string _filePath;
+
+    private IDictionary<string, string> _settings = new Dictionary<string, string>();
+    private IDictionary<string, string> _settingComments = new Dictionary<string, string>();
+
+    private UTF8Encoding _encoding = new UTF8Encoding();
+
+    private const char SPLIT_CHAR = '=';
+
+    
         private readonly ILogger<HomeController> _logger;
 
         public HomeController(ILogger<HomeController> logger)
@@ -35,7 +47,36 @@ namespace TestOpenIdConnect.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        
+     // test security   
+
+    public void Save()
+    {
+        using (FileStream stream = File.Create(_filePath))
+        {
+            byte[] data = ToByteArray();
+
+            stream.Write(data, 0, data.Length);
+        }
+    }
+
+    private byte[] ToByteArray()
+    {
+        StringBuilder builder = new StringBuilder();
+
+        foreach (var pair in _settings)
+        {
+            if (_settingComments.ContainsKey(pair.Key))
+            {
+                builder.Append(_settingComments[pair.Key]);
+                builder.AppendLine();
+            }
+
+            builder.AppendFormat("{0}={1}", pair.Key, pair.Value);
+            builder.AppendLine();
+        }
+
+
+             
     public string UpdateCustomerPassword(string txtUsername, string txtPassword)
     {
         string userName = txtUsername;
