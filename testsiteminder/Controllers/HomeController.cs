@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using TestOpenIdConnect.Models;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace TestOpenIdConnect.Controllers
 {
@@ -32,5 +34,24 @@ namespace TestOpenIdConnect.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        
+    public string UpdateCustomerPassword(string txtUsername, string txtPassword)
+    {
+        string userName = txtUsername;
+        string password = txtPassword;
+
+        Regex testPassword = new Regex(userName);
+        Match match = testPassword.Match(password);
+        if (match.Success)
+        {
+           return "Do not include name in password.";
+        }
+        else
+        {
+            return "Good password.";
+        }
+    }
+    
     }
 }
